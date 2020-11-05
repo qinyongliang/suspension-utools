@@ -5,16 +5,29 @@ window.exports = {
         args: {
             enter: (action) => {
                 window.utools.hideMainWindow();
-                let size = electron.nativeImage.createFromDataURL(action.payload).getSize();
-                utools.createBrowserWindow('suspend.html?a=1#' + action.payload, {
+                let payload, size;
+                if (action.type === 'files') {
+                    let img = electron.nativeImage.createFromPath(action.payload[0].path);
+                    size = img.getSize();
+                    payload = img.toDataURL();
+                } else if (action.type === 'img') {
+                    size = electron.nativeImage.createFromDataURL(action.payload).getSize();
+                    payload = action.payload;
+                }
+                
+                utools.createBrowserWindow('suspend.html?a=1#' + payload, {
                     title: 'img',
-                    width: size.width / 2,
-                    height: size.height / 2,
+                    width: size.width / (utools.isMacOs() ? 2 : 1),
+                    height: size.height / (utools.isMacOs() ? 2 : 1),
                     useContentSize: true,
+                    minimizable:false,
+                    maximizable:false,
+                    fullscreenable:false,
                     frame: false,
+                    acceptFirstMouse:true,
                     alwaysOnTop: true,
                 })
-                window.utools.outPlugin()
+                window.utools.outPlugin() 
             }
         }
     }

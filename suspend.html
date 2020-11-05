@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html>
+<style type="text/css">
+    body {
+        -webkit-app-region: drag;
+        -webkit-user-select: none;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+</style>
 
-<body
-    scroll="no"
-    style="-webkit-app-region: drag;-webkit-user-select: none;-webkit-app-region: drag;margin:0;width:100%;height: 100%">
+<body scroll="no">
+    <img draggable="false"/>
 </body>
+
 <script type="application/javascript">
     document.addEventListener("keydown", event => {
         switch (event.key) {
@@ -13,15 +25,16 @@
                 break;
         }
     });
-    let img = document.createElement("img");
+    let img = document.querySelector("img")
     img.src = window.location.hash.substring(1)
     img.style = "width:100%;height:100%"
-    document.body.appendChild(img);
     document.body.addEventListener("mousewheel", (e) => {
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         img.style.width = img.width + (7 * delta) + "px";
+        window.resizeTo(img.width, img.height);
         return false;
-    }, false); 
+    }, false);
+
 </script>
 
 </html>
