@@ -8,7 +8,9 @@
 	"logo": "icon.png",
 	"features": [{
 		"code": "suspend",
-		"cmds": [{
+		"cmds": [
+			"截图并悬浮",
+			{
 				"type": "img",
 				"label": "悬浮"
 			},
