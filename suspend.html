@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body
+    style="-webkit-app-region: drag;-webkit-user-select: none;-webkit-app-region: drag;margin:0;width:100%;height: 100%;">
+</body>
+<script type="application/javascript">
+    document.addEventListener("keydown", event => {
+        switch (event.key) {
+            case "Escape":
+                window.close();
+                break;
+        }
+    });
+    let img = document.createElement("img");
+    img.src = window.location.hash.substring(1)
+    img.style = "width:100%;height:100%"
+    document.body.appendChild(img);
+</script>
+
+</html>

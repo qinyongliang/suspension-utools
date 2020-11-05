@@ -1,0 +1,20 @@
+{
+	"pluginName": "悬浮",
+	"description": "悬浮你的图片",
+	"author": "qinyongliang",
+	"homepage": "https://github.com/qinyongliang/",
+	"preload": "preload.js",
+	"version": "1.0.0",
+	"logo": "icon.png",
+	"features": [
+		{
+			"code": "suspend",
+			"cmds": [
+				{
+					"type": "img",
+					"label": "悬浮"
+				}
+			]
+		}
+	]
+}
