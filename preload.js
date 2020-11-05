@@ -10,7 +10,6 @@ window.exports = {
                     title: 'img',
                     width: size.width / 2,
                     height: size.height / 2,
-                    zoomToPageWidth:true,
                     useContentSize: true,
                     frame: false,
                     alwaysOnTop: true,
