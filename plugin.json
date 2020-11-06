@@ -6,20 +6,23 @@
 	"preload": "preload.js",
 	"version": "1.1.0",
 	"logo": "icon.png",
-	"features": [{
-		"code": "suspend",
-		"cmds": [
-			"截图并悬浮",
-			{
-				"type": "img",
-				"label": "悬浮"
-			},
-			{
-				"type": "files",
-				"label": "悬浮图片",
-				"fileType": "file",
-				"match": "/.(?:jpg|jpeg|png)$/i"
-			}
-		]
-	}]
+	"features": [
+		{
+			"code": "suspend",
+			"cmds": [
+				"截图并悬浮",
+				{
+					"type": "img",
+					"label": "悬浮"
+				},
+				{
+					"type": "files",
+					"label": "悬浮图片",
+					"fileType": "file",
+					"match": "/.(?:jpg|jpeg|png)$/i",
+					"maxLength": 9
+				}
+			]
+		}
+	]
 }

@@ -18,9 +18,8 @@ function show(size, payload) {
         webPreferences: {
             preload: 'suspend.js'
         }
-    })
-    window.utools.outPlugin()
-}
+    });
+};
 
 window.exports = {
     "suspend": {
@@ -28,20 +27,24 @@ window.exports = {
         args: {
             enter: (action) => {
                 window.utools.hideMainWindow();
-                let payload, size;
                 if (action.type === 'files') {
-                    let img = electron.nativeImage.createFromPath(action.payload[0].path);
-                    size = img.getSize();
-                    payload = img.toDataURL();
-                    show(size, payload);
+                    for(i in action.payload){
+                        const img = electron.nativeImage.createFromPath(action.payload[i].path);
+                        const size = img.getSize();
+                        const payload = img.toDataURL();
+                        show(size, payload);
+                    }
+                    window.utools.outPlugin();
                 } else if (action.type === 'img') {
-                    size = electron.nativeImage.createFromDataURL(action.payload).getSize();
-                    payload = action.payload;
+                    const size = electron.nativeImage.createFromDataURL(action.payload).getSize();
+                    const payload = action.payload;
                     show(size, payload)
+                    window.utools.outPlugin();
                 } else if (action.type === 'text') {
                     utools.screenCapture(base64Str => {
-                        size = electron.nativeImage.createFromDataURL(base64Str).getSize();
+                        const size = electron.nativeImage.createFromDataURL(base64Str).getSize();
                         show(size, base64Str);
+                        window.utools.outPlugin();
                     })
                 }
             }
