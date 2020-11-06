@@ -30,34 +30,67 @@
 </body>
 
 <script type="application/javascript">
+    let img = document.querySelector("img")
+    img.src = window.location.hash.substring(1);
+    let rotate = 0;
+    function resize(width = null, height = null){
+        // if (rotate % 90 != 0) {
+        //     window.resize(width ? width : img.width, height ? height : img.height);
+        // } else {
+        //     window.resize(height ? height : img.height, width ? width : img.width);
+        // }
+        window.resize(img.width,img.width);
+    }
     document.addEventListener("keydown", event => {
         switch (event.key) {
             case "Escape":
                 window.close();
                 break;
             case "ArrowUp":
-                window.mv(0,-1);
+                window.mv(0, -1);
                 break;
             case "ArrowDown":
-                window.mv(0,1);
+                window.mv(0, 1);
                 break;
             case "ArrowLeft":
-                window.mv(-1,0);
+                window.mv(-1, 0);
                 break;
             case "ArrowRight":
-                window.mv(1,0);
+                window.mv(1, 0);
+                break;
+            case "=":
+                img.style.width = img.width + 7 + "px";
+                resize();
+                break;
+            case "-":
+                if (img.width > 100) {
+                    img.style.width = img.width - 7 + "px";
+                    resize();
+                }
+                break;
+            case "[":
+                let width = img.width;
+                let height = img.height;
+                rotate = (rotate - 90) % 360;
+                img.style.webkitTransform = `rotate(${rotate}deg)`;
+                resize(width, height);
+                break;
+            case "]":
+                let width = img.width;
+                let height = img.height;
+                rotate = (rotate + 90) % 360;
+                img.style.webkitTransform = `rotate(${rotate}deg)`;
+                resize(width, height);
                 break;
         }
     });
-    let img = document.querySelector("img")
-    img.src = window.location.hash.substring(1)
     document.body.addEventListener("mousewheel", (e) => {
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         if (delta < 0 && img.width <= 100) {
             return false;
         }
         img.style.width = img.width + (7 * delta) + "px";
-        window.resize(img.width, img.height);
+        resize();
         return false;
     }, false);
 
