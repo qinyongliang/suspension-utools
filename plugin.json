@@ -19,7 +19,7 @@
 					"type": "files",
 					"label": "悬浮图片",
 					"fileType": "file",
-					"match": "/.(?:jpg|jpeg|png)$/i",
+					"match": "/.(?:bmp|gif|heic|jpeg|jpg|jpe|png|svg|webp|ico)$/i",
 					"maxLength": 9
 				}
 			]
