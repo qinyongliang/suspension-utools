@@ -12,6 +12,6 @@ if (remote) {
         img.style.width = '100%';
         let scale = img.width / (img.height * 1.0)
         let height = newBounds.width / scale;
-        win.setSize(newBounds.width, height);
+        win.setSize(newBounds.width, Math.min(newBounds.height, height));
     })
 }
