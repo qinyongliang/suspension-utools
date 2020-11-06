@@ -23,6 +23,17 @@
 					"maxLength": 9
 				}
 			]
+		},
+		{
+			"code": "suspend-base64",
+			"cmds": [
+				{
+					"type": "regex",
+					"label": "悬浮图片",
+					"match": "/^data:image\/(bmp|gif|heic|jpeg|jpeg|jpeg|png|svg\\+xml|webp|x-icon);base64,/",
+					"minLength":100
+				}
+			]
 		}
 	]
 }

@@ -66,9 +66,9 @@ window.exports = {
                     for (i in action.payload) {
                         fileUrlData(action.payload[i].path).then(payload => {
                             show(payload);
-                        }).catch(err=>{
+                        }).catch(err => {
                             utools.showNotification(err);
-                        }).finally(()=>{
+                        }).finally(() => {
                             window.utools.outPlugin();
                         })
                     }
@@ -81,6 +81,15 @@ window.exports = {
                         window.utools.outPlugin();
                     })
                 }
+            }
+        }
+    },
+    "suspend-base64": {
+        mode: "none",
+        args: {
+            enter: (action) => {
+                show(action.payload);
+                window.utools.outPlugin();
             }
         }
     }
