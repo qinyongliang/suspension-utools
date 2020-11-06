@@ -5,6 +5,12 @@ if (remote) {
     window.resize = (x, y) => {
         win.setSize(x, y);
     }
+    window.mv = (x, y) => {
+        let bound = win.getBounds();
+        bound.x += x;
+        bound.y += y;
+        win.setBounds(bound);
+    }
     win.on('will-resize', (event, newBounds) => {
         event.preventDefault();
         //只能按比例缩放图片

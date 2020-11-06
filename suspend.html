@@ -35,6 +35,18 @@
             case "Escape":
                 window.close();
                 break;
+            case "ArrowUp":
+                window.mv(0,-1);
+                break;
+            case "ArrowDown":
+                window.mv(0,1);
+                break;
+            case "ArrowLeft":
+                window.mv(-1,0);
+                break;
+            case "ArrowRight":
+                window.mv(1,0);
+                break;
         }
     });
     let img = document.querySelector("img")
