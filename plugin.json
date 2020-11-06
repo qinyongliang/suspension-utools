@@ -34,6 +34,17 @@
 					"minLength":100
 				}
 			]
+		},
+		{
+			"code": "suspend-svg",
+			"cmds": [
+				{
+					"type": "regex",
+					"label": "悬浮图片",
+					"match": "/^<svg[\\d\\D\\w\\W\\s\\S]*<\/svg>[\\D]*$/",
+					"minLength":50
+				}
+			]
 		}
 	]
 }

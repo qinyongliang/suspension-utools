@@ -65,11 +65,12 @@ window.exports = {
                 if (action.type === 'files') {
                     for (i in action.payload) {
                         fileUrlData(action.payload[i].path).then(payload => {
+                            console.log(payload);
                             show(payload);
                         }).catch(err => {
                             utools.showNotification(err);
                         }).finally(() => {
-                            window.utools.outPlugin();
+                            // window.utools.outPlugin(); 
                         })
                     }
                 } else if (action.type === 'img') {
@@ -89,6 +90,16 @@ window.exports = {
         args: {
             enter: (action) => {
                 show(action.payload);
+                window.utools.outPlugin();
+            }
+        }
+    },
+    "suspend-svg": {
+        mode: "none",
+        args: {
+            enter: (action) => {
+                var base64 = btoa(action.payload);
+                show(`data:image/svg+xml;base64,${base64}`);
                 window.utools.outPlugin();
             }
         }
