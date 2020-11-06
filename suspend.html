@@ -11,10 +11,15 @@
         overflow-x: hidden;
         overflow-y: hidden;
     }
+
+    img {
+        width: 100%;
+        height: 100%
+    }
 </style>
 
 <body scroll="no">
-    <img draggable="false"/>
+    <img draggable="false" />
 </body>
 
 <script type="application/javascript">
@@ -27,11 +32,13 @@
     });
     let img = document.querySelector("img")
     img.src = window.location.hash.substring(1)
-    img.style = "width:100%;height:100%"
     document.body.addEventListener("mousewheel", (e) => {
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        if (delta < 0 && img.width <= 100) {
+            return false;
+        }
         img.style.width = img.width + (7 * delta) + "px";
-        window.resizeTo(img.width, img.height);
+        window.resize(img.width, img.height);
         return false;
     }, false);
 
