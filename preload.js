@@ -70,7 +70,7 @@ window.exports = {
                         }).catch(err => {
                             utools.showNotification(err);
                         }).finally(() => {
-                            // window.utools.outPlugin(); 
+                            window.utools.outPlugin(); 
                         })
                     }
                 } else if (action.type === 'img') {
