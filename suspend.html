@@ -13,10 +13,9 @@
     }
 
     img {
-        width: 100%;
-        height: 100%;
         opacity: 1;
         transition: 0.3s opacity;
+        transition: all 0.3s ease-in-out;
     }
 
     img:hover {
@@ -31,17 +30,27 @@
 
 <script type="application/javascript">
     let img = document.querySelector("img")
-    img.src = window.location.hash.substring(1);
+    const src = window.location.hash.substring(1);
+    img.src = src;
     let rotate = 0;
-    function resize(width = null, height = null){
-        // if (rotate % 90 != 0) {
-        //     window.resize(width ? width : img.width, height ? height : img.height);
-        // } else {
-        //     window.resize(height ? height : img.height, width ? width : img.width);
-        // }
-        window.resize(img.width,img.width);
+
+    if (!window.resize) {
+        window.resize = () => { }
+        window.mv = () => { }
     }
+
+    function windowResize(width, height) {
+        if (rotate / 90 % 2 != 1) {
+            //横着
+            window.resize(width, height);
+        } else {
+            // 竖着
+            window.resize(height, width);
+        }
+    }
+
     document.addEventListener("keydown", event => {
+        console.log(event.key);
         switch (event.key) {
             case "Escape":
                 window.close();
@@ -59,29 +68,68 @@
                 window.mv(1, 0);
                 break;
             case "=":
-                img.style.width = img.width + 7 + "px";
-                resize();
+                windowResize(img.width + 7, img.height);
                 break;
             case "-":
                 if (img.width > 100) {
-                    img.style.width = img.width - 7 + "px";
-                    resize();
+                    windowResize(img.width - 7, img.height);
                 }
                 break;
-            case "[":
+            case "[": {
                 let width = img.width;
                 let height = img.height;
-                rotate = (rotate - 90) % 360;
-                img.style.webkitTransform = `rotate(${rotate}deg)`;
-                resize(width, height);
+                //固定高宽.
+                img.style.width = width + 'px';
+                img.style.height = height + 'px';
+                //改变窗口位置和大小
+                //计算动画外接圆直径
+                let R = Math.sqrt(width * width + height * height);
+                //设置最终大小
+                document.body.style.width = R + 'px';
+                document.body.style.height = R + 'px';
+                //图片居中
+                let xOffset = (R - width) / 2;
+                let yOffset = (R - height) / 2;
+                img.style.position = "relative";
+                img.style.left = xOffset + 'px';
+                img.style.top = yOffset + 'px';
+                window.mv(-xOffset, -yOffset, R, R);
+
+                //旋转动画
+                rotate -= 90;
+                img.style.webkitTransform = `rotateZ(${rotate}deg)`
+                let reduction = () => {
+                    img.removeEventListener('webkitTransitionEnd', reduction);
+                    let width = img.width;
+                    let height = img.height;
+                    //动画执行完毕后窗口复原
+
+                    window.mv(yOffset, xOffset, height, width);
+                    document.body.style.width = '100%';
+                    document.body.style.height = '100%';
+                    img.style.position = "static";
+                    // img.style.width = width + 'px';
+                    // img.style.height = heigh + 'px';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+
+
+                }
+                img.addEventListener('webkitTransitionEnd', reduction);
                 break;
-            case "]":
+            }
+            case "]": {
                 let width = img.width;
                 let height = img.height;
-                rotate = (rotate + 90) % 360;
-                img.style.webkitTransform = `rotate(${rotate}deg)`;
-                resize(width, height);
+                rotate += 90;
+                document.body.style.webkitTransform = `rotateZ(${rotate}deg)`
+                // windowResize(width, height);
                 break;
+            }
+            //Home
+            //End
+            //PageUp
+            //PageDown
         }
     });
     document.body.addEventListener("mousewheel", (e) => {
@@ -89,8 +137,8 @@
         if (delta < 0 && img.width <= 100) {
             return false;
         }
-        img.style.width = img.width + (7 * delta) + "px";
-        resize();
+        windowResize(img.width + (7 * delta), img.height);
+        // windowResize();
         return false;
     }, false);
 
