@@ -4,23 +4,27 @@
     body {
         -webkit-app-region: drag;
         -webkit-user-select: none;
-        margin: 0;
+        margin: 0px;
         width: 100%;
         height: 100%;
         overflow: hidden;
         overflow-x: hidden;
         overflow-y: hidden;
+        opacity: 1;
+        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    body:hover {
+        opacity: 0.8;
     }
 
     img {
-        opacity: 1;
-        transition: 0.3s opacity;
-        transition: all 0.3s ease-in-out;
+        width: 100vw;
+        height: auto;
     }
 
-    img:hover {
-        opacity: 0.8;
-        transition: 0.3s opacity;
+    .rotateing {
+        transition: transform 0.5s ease-in-out;
     }
 </style>
 
@@ -29,24 +33,68 @@
 </body>
 
 <script type="application/javascript">
+    let lock = false;
     let img = document.querySelector("img")
-    const src = window.location.hash.substring(1);
-    img.src = src;
-    let rotate = 0;
+    img.src = window.location.hash.substring(1);
+    window.rotateZ = 0;
+    window.rotateX = 0;
+    window.rotateY = 0;
 
     if (!window.resize) {
         window.resize = () => { }
-        window.mv = () => { }
+        window.moveBounds = () => { }
+        window.isMac = true;
     }
 
-    function windowResize(width, height) {
-        if (rotate / 90 % 2 != 1) {
-            //横着
-            window.resize(width, height);
-        } else {
-            // 竖着
-            window.resize(height, width);
+    function rotate(degree) {
+        if (lock) {
+            return;
         }
+        lock = true;
+        //获得图片大小
+        let { width, height } = img;
+        //固定高宽.
+        img.style.width = width + 'px';
+        img.style.height = height + 'px';
+
+        //改变窗口位置和大小
+        //计算动画外接圆直径
+        let R = Math.sqrt(width * width + height * height);
+        //图片居中
+        let xOffset = (R - width) / 2;
+        let yOffset = (R - height) / 2;
+        img.style.position = "relative";
+        img.style.left = xOffset + 'px';
+        img.style.top = yOffset + 'px';
+        window.moveBounds(-xOffset, -yOffset, R, R);
+
+        //旋转动画
+        img.classList.add('rotateing');
+        window.rotateZ = degree;
+        img.style.webkitTransform = `rotateZ(${window.rotateZ}deg)`
+        let reduction = () => {
+            console.log('webkitTransitionEnd');
+            img.removeEventListener('webkitTransitionEnd', reduction);
+            //关闭动画
+            img.classList.remove('rotateing');
+            img.style.left = '0px';
+            img.style.top = '0px';
+            img.src = rotateImage();
+            img.style.display = 'none';
+            img.onload = () => {
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.display = 'initial';
+                img.style.webkitTransform = 'rotateZ(0deg)';
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
+                lock = false;
+            }
+            // //动画执行完毕后窗口复原
+            window.moveBounds(yOffset, xOffset, height, width);
+
+        }
+        img.addEventListener('webkitTransitionEnd', reduction);
     }
 
     document.addEventListener("keydown", event => {
@@ -56,92 +104,75 @@
                 window.close();
                 break;
             case "ArrowUp":
-                window.mv(0, -1);
+                window.moveBounds(0, -1);
                 break;
             case "ArrowDown":
-                window.mv(0, 1);
+                window.moveBounds(0, 1);
                 break;
             case "ArrowLeft":
-                window.mv(-1, 0);
+                window.moveBounds(-1, 0);
                 break;
             case "ArrowRight":
-                window.mv(1, 0);
+                window.moveBounds(1, 0);
                 break;
             case "=":
-                windowResize(img.width + 7, img.height);
+                window.resize(img.width + 7, img.height);
                 break;
             case "-":
                 if (img.width > 100) {
-                    windowResize(img.width - 7, img.height);
+                    window.resize(img.width - 7, img.height);
                 }
                 break;
+            //旋转相关
+            case "【":
             case "[": {
-                let width = img.width;
-                let height = img.height;
-                //固定高宽.
-                img.style.width = width + 'px';
-                img.style.height = height + 'px';
-                //改变窗口位置和大小
-                //计算动画外接圆直径
-                let R = Math.sqrt(width * width + height * height);
-                //设置最终大小
-                document.body.style.width = R + 'px';
-                document.body.style.height = R + 'px';
-                //图片居中
-                let xOffset = (R - width) / 2;
-                let yOffset = (R - height) / 2;
-                img.style.position = "relative";
-                img.style.left = xOffset + 'px';
-                img.style.top = yOffset + 'px';
-                window.mv(-xOffset, -yOffset, R, R);
-
-                //旋转动画
-                rotate -= 90;
-                img.style.webkitTransform = `rotateZ(${rotate}deg)`
-                let reduction = () => {
-                    img.removeEventListener('webkitTransitionEnd', reduction);
-                    let width = img.width;
-                    let height = img.height;
-                    //动画执行完毕后窗口复原
-
-                    window.mv(yOffset, xOffset, height, width);
-                    document.body.style.width = '100%';
-                    document.body.style.height = '100%';
-                    img.style.position = "static";
-                    // img.style.width = width + 'px';
-                    // img.style.height = heigh + 'px';
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-
-
-                }
-                img.addEventListener('webkitTransitionEnd', reduction);
+                rotate(-90);
                 break;
             }
+            case "】":
             case "]": {
-                let width = img.width;
-                let height = img.height;
-                rotate += 90;
-                document.body.style.webkitTransform = `rotateZ(${rotate}deg)`
-                // windowResize(width, height);
+                rotate(90);
                 break;
             }
-            //Home
-            //End
-            //PageUp
-            //PageDown
+            //左右反转
+            case "Home":
+            case "End":
+                window.rotateY += 180;
+                window.document.body.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg)`
+                break;
+            //上下反转
+            case "PageUp":
+            case "PageDown":
+                window.rotateX -= 180;
+                window.document.body.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg)`
+                break;
         }
+
     });
     document.body.addEventListener("mousewheel", (e) => {
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         if (delta < 0 && img.width <= 100) {
             return false;
         }
-        windowResize(img.width + (7 * delta), img.height);
-        // windowResize();
+        window.resize(img.width + (7 * delta), img.height);
         return false;
     }, false);
 
+    //重画图片
+    function rotateImage() {
+        let img = document.querySelector("img");
+        let canvas = document.createElement('canvas');
+        let cContext = canvas.getContext('2d');
+        let degree = window.rotateZ % 360;
+        let height = img.height * (window.isMac ? 2 : 1);
+        let width = img.width * (window.isMac ? 2 : 1);
+        canvas.width = height;
+        canvas.height = width;
+        cContext.translate(canvas.width / 2, canvas.height / 2);
+        cContext.rotate(degree * Math.PI / 180);
+        cContext.drawImage(img, -width / 2, -height / 2);
+        return canvas.toDataURL();
+    }
 </script>
 
 </html>

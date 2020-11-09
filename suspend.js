@@ -1,10 +1,11 @@
 const { remote } = require('electron')
 if (remote) {
+    window.isMac = utools.isMacOs();
     let win = remote.getCurrentWindow();
-    window.resize = (x, y) => {
-        win.setSize(x, y);
+    window.resize = (width, height) => {
+        win.setSize(width, height);
     }
-    window.mv = (x, y, width, height) => {
+    window.moveBounds = (x, y, width, height) => {
         let bound = win.getBounds();
         let newBounds = {
             x: parseInt(bound.x + x),
@@ -14,6 +15,7 @@ if (remote) {
         }
         win.setBounds(newBounds);
     }
+    
     win.on('will-resize', (event, newBounds) => {
         event.preventDefault();
         //只能按比例缩放图片

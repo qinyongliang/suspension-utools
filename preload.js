@@ -29,7 +29,7 @@ function show(payload) {
             fullscreenable: false,
             //背景透明，防止放大缩小时出现白框
             transparent: true,
-            // backgroundColor: '#00000000',
+            backgroundColor: '#00000000',
             frame: false,
             alwaysOnTop: true,
             webPreferences: {
