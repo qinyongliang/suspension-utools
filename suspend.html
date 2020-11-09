@@ -2,103 +2,70 @@
 <html>
 <style type="text/css">
     body {
-        -webkit-app-region: drag;
-        -webkit-user-select: none;
         margin: 0px;
-        width: 100%;
-        height: 100%;
         overflow: hidden;
         overflow-x: hidden;
         overflow-y: hidden;
-        opacity: 1;
-        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
 
-    body:hover {
+    img:hover {
         opacity: 0.8;
     }
 
     img {
-        width: 100vw;
-        height: auto;
+        -webkit-app-region: drag;
+        -webkit-user-select: none;
+        opacity: 1;
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     }
 
-    .rotateing {
-        transition: transform 0.5s ease-in-out;
+    div {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
 
-<body scroll="no">
-    <img draggable="false" />
+<body scroll="no" class="ui-flex justify-center center">
+    <div class="cell">
+        <img draggable="false" />
+    </div>
 </body>
 
 <script type="application/javascript">
     let lock = false;
+    let zoomTime = {
+        lastKey: null,
+        time: 0
+    }
     let img = document.querySelector("img")
     img.src = window.location.hash.substring(1);
     window.rotateZ = 0;
     window.rotateX = 0;
     window.rotateY = 0;
-
-    if (!window.resize) {
-        window.resize = () => { }
-        window.moveBounds = () => { }
-        window.isMac = true;
-    }
-
-    function rotate(degree) {
-        if (lock) {
-            return;
-        }
-        lock = true;
-        //获得图片大小
-        let { width, height } = img;
-        //固定高宽.
+    window.onRender = (width, height) => {
         img.style.width = width + 'px';
         img.style.height = height + 'px';
-
-        //改变窗口位置和大小
-        //计算动画外接圆直径
-        let R = Math.sqrt(width * width + height * height);
-        //图片居中
-        let xOffset = (R - width) / 2;
-        let yOffset = (R - height) / 2;
-        img.style.position = "relative";
-        img.style.left = xOffset + 'px';
-        img.style.top = yOffset + 'px';
-        window.moveBounds(-xOffset, -yOffset, R, R);
-
-        //旋转动画
-        img.classList.add('rotateing');
-        window.rotateZ = degree;
-        img.style.webkitTransform = `rotateZ(${window.rotateZ}deg)`
-        let reduction = () => {
-            console.log('webkitTransitionEnd');
-            img.removeEventListener('webkitTransitionEnd', reduction);
-            //关闭动画
-            img.classList.remove('rotateing');
-            img.style.left = '0px';
-            img.style.top = '0px';
-            img.src = rotateImage();
-            img.style.display = 'none';
-            img.onload = () => {
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.display = 'initial';
-                img.style.webkitTransform = 'rotateZ(0deg)';
-                document.body.style.width = '100%';
-                document.body.style.height = '100%';
-                lock = false;
-            }
-            // //动画执行完毕后窗口复原
-            window.moveBounds(yOffset, xOffset, height, width);
-
-        }
-        img.addEventListener('webkitTransitionEnd', reduction);
     }
+    function query(queryName) {
+        var query = decodeURI(window.location.search.substring(1));
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == queryName) { return pair[1]; }
+        }
+        return null;
+    }
+    window.onRender(query('width'), query('height'));
 
     document.addEventListener("keydown", event => {
-        console.log(event.key);
+        if (zoomTime.lastKey === event.key) {
+            zoomTime.time++;
+        } else {
+            zoomTime.lastKey = event.key;
+            zoomTime.time = 3;
+        }
         switch (event.key) {
             case "Escape":
                 window.close();
@@ -116,38 +83,39 @@
                 window.moveBounds(1, 0);
                 break;
             case "=":
-                window.resize(img.width + 7, img.height);
+                window.moveBounds(0, 0, img.width + zoomTime.time / 3 * 10, img.height);
                 break;
             case "-":
                 if (img.width > 100) {
-                    window.resize(img.width - 7, img.height);
+                    window.moveBounds(0, 0, img.width - zoomTime.time / 3 * 10, img.height);
                 }
                 break;
             //旋转相关
             case "【":
             case "[": {
-                rotate(-90);
+                window.rotateZ -= 90;
+                img.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg) rotateZ(${window.rotateZ}deg)`
                 break;
             }
             case "】":
             case "]": {
-                rotate(90);
+                window.rotateZ += 90;
+                img.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg) rotateZ(${window.rotateZ}deg)`
                 break;
             }
             //左右反转
             case "Home":
             case "End":
                 window.rotateY += 180;
-                window.document.body.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg)`
+                img.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg) rotateZ(${window.rotateZ}deg)`
                 break;
             //上下反转
             case "PageUp":
             case "PageDown":
                 window.rotateX -= 180;
-                window.document.body.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg)`
+                img.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg) rotateZ(${window.rotateZ}deg)`
                 break;
         }
-
     });
     document.body.addEventListener("mousewheel", (e) => {
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
@@ -157,22 +125,6 @@
         window.resize(img.width + (7 * delta), img.height);
         return false;
     }, false);
-
-    //重画图片
-    function rotateImage() {
-        let img = document.querySelector("img");
-        let canvas = document.createElement('canvas');
-        let cContext = canvas.getContext('2d');
-        let degree = window.rotateZ % 360;
-        let height = img.height * (window.isMac ? 2 : 1);
-        let width = img.width * (window.isMac ? 2 : 1);
-        canvas.width = height;
-        canvas.height = width;
-        cContext.translate(canvas.width / 2, canvas.height / 2);
-        cContext.rotate(degree * Math.PI / 180);
-        cContext.drawImage(img, -width / 2, -height / 2);
-        return canvas.toDataURL();
-    }
 </script>
 
 </html>

@@ -13,15 +13,20 @@ const mineMap = {
     "webp": "image/webp",
     "ico": "image/x-icon"
 }
-
 function show(payload) {
     let img = new Image();
     img.src = payload;
     img.onload = function () {
-        utools.createBrowserWindow('suspend.html?a=1#' + payload, {
+        //计算最小能够包裹动画的窗体大小
+        let width = img.width / (utools.isMacOs() ? 2 : 1);
+        let height = img.height / (utools.isMacOs() ? 2 : 1);
+        let R = parseInt(Math.sqrt(width * width + height * height));
+        utools.createBrowserWindow('suspend.html?width=' + width + '&width=' + height + '#' + payload, {
             title: 'img',
-            width: img.width / (utools.isMacOs() ? 2 : 1),
-            height: img.height / (utools.isMacOs() ? 2 : 1),
+            width: R,
+            height: R,
+            minHeight: 10,
+            minWidth: 10,
             useContentSize: true,
             //不能最大最小化
             minimizable: false,
@@ -70,7 +75,7 @@ window.exports = {
                         }).catch(err => {
                             utools.showNotification(err);
                         }).finally(() => {
-                            window.utools.outPlugin(); 
+                            window.utools.outPlugin();
                         })
                     }
                 } else if (action.type === 'img') {
