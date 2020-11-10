@@ -18,10 +18,25 @@ function show(payload) {
     let img = new Image();
     img.src = payload;
     img.onload = function () {
+        let width = img.width / (utools.isMacOs() ? 2 : 1)
+        let height = img.height / (utools.isMacOs() ? 2 : 1)
+        let scale = width / (height * 1.0)
+        //图片大小不能超过当前显示器80%，否则缩放
+        let display = utools.getDisplayNearestPoint(utools.getCursorScreenPoint())
+        if (display) {
+            if (width > display.size.width * 0.8) {
+                width = display.size.width * 0.8;
+                height = width / scale;
+            }
+            if (height > display.size.height * 0.8) {
+                height = display.size.height * 0.8;
+                width = height * scale;
+            }
+        }
         utools.createBrowserWindow('suspend.html?a=1#' + payload, {
             title: 'img',
-            width: img.width / (utools.isMacOs() ? 2 : 1),
-            height: img.height / (utools.isMacOs() ? 2 : 1),
+            width: parseInt(width),
+            height: parseInt(height),
             useContentSize: true,
             //不能最大最小化
             minimizable: false,
@@ -70,7 +85,7 @@ window.exports = {
                         }).catch(err => {
                             utools.showNotification(err);
                         }).finally(() => {
-                            window.utools.outPlugin(); 
+                            window.utools.outPlugin();
                         })
                     }
                 } else if (action.type === 'img') {
