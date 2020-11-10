@@ -22,10 +22,6 @@
         width: 100vw;
         height: auto;
     }
-
-    .rotateing {
-        transition: transform 0.5s ease-in-out;
-    }
 </style>
 
 <body scroll="no">
@@ -36,16 +32,13 @@
     let lock = false;
     let img = document.querySelector("img")
     img.src = window.location.hash.substring(1);
-    window.rotateZ = 0;
     window.rotateX = 0;
     window.rotateY = 0;
 
     if (!window.resize) {
         window.resize = () => { }
         window.moveBounds = () => { }
-        window.isMac = true;
     }
-
     function rotate(degree) {
         if (lock) {
             return;
@@ -53,48 +46,15 @@
         lock = true;
         //获得图片大小
         let { width, height } = img;
-        //固定高宽.
-        img.style.width = width + 'px';
-        img.style.height = height + 'px';
-
-        //改变窗口位置和大小
-        //计算动画外接圆直径
+        //计算改变后窗口位置和大小
         let R = Math.sqrt(width * width + height * height);
-        //图片居中
         let xOffset = (R - width) / 2;
         let yOffset = (R - height) / 2;
-        img.style.position = "relative";
-        img.style.left = xOffset + 'px';
-        img.style.top = yOffset + 'px';
-        window.moveBounds(-xOffset, -yOffset, R, R);
-
-        //旋转动画
-        img.classList.add('rotateing');
-        window.rotateZ = degree;
-        img.style.webkitTransform = `rotateZ(${window.rotateZ}deg)`
-        let reduction = () => {
-            console.log('webkitTransitionEnd');
-            img.removeEventListener('webkitTransitionEnd', reduction);
-            //关闭动画
-            img.classList.remove('rotateing');
-            img.style.left = '0px';
-            img.style.top = '0px';
-            img.src = rotateImage();
-            img.style.display = 'none';
-            img.onload = () => {
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.display = 'initial';
-                img.style.webkitTransform = 'rotateZ(0deg)';
-                document.body.style.width = '100%';
-                document.body.style.height = '100%';
-                lock = false;
-            }
-            // //动画执行完毕后窗口复原
-            window.moveBounds(yOffset, xOffset, height, width);
-
+        img.src = rotateImage(degree);
+        img.onload = () => {
+            window.moveBounds(yOffset - xOffset, xOffset - yOffset, height, width);
+            lock = false;
         }
-        img.addEventListener('webkitTransitionEnd', reduction);
     }
 
     document.addEventListener("keydown", event => {
@@ -126,12 +86,12 @@
             //旋转相关
             case "【":
             case "[": {
-                rotate(-90);
+                rotate(90);
                 break;
             }
             case "】":
             case "]": {
-                rotate(90);
+                rotate(-90);
                 break;
             }
             //左右反转
@@ -159,18 +119,20 @@
     }, false);
 
     //重画图片
-    function rotateImage() {
+    function rotateImage(degree) {
+        degree = degree % 360;
         let img = document.querySelector("img");
+        let tmpImg = new Image()
+        tmpImg.src = img.src;
         let canvas = document.createElement('canvas');
         let cContext = canvas.getContext('2d');
-        let degree = window.rotateZ % 360;
-        let height = img.height * (window.isMac ? 2 : 1);
-        let width = img.width * (window.isMac ? 2 : 1);
+        let height = tmpImg.height;
+        let width = tmpImg.width;
         canvas.width = height;
         canvas.height = width;
         cContext.translate(canvas.width / 2, canvas.height / 2);
         cContext.rotate(degree * Math.PI / 180);
-        cContext.drawImage(img, -width / 2, -height / 2);
+        cContext.drawImage(tmpImg, -width / 2, -height / 2);
         return canvas.toDataURL();
     }
 </script>
