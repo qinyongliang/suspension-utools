@@ -31,7 +31,9 @@
 <script type="application/javascript">
     let lock = false;
     let img = document.querySelector("img")
-    img.src = window.location.hash.substring(1);
+    let imgKey = window.location.hash.substring(1);
+    img.src = localStorage[imgKey];
+    localStorage.removeItem(imgKey);
     window.rotateX = 0;
     window.rotateY = 0;
 
@@ -57,30 +59,44 @@
         }
     }
 
+    let keyCounter = {
+        key: undefined,
+        count: 3,
+        time: 0
+    }
     document.addEventListener("keydown", event => {
         console.log(event.key);
+        //长按操作将加速
+        if (keyCounter.key === event.key && new Date().getTime() - keyCounter.time < 200) {
+            keyCounter.count++
+        } else {
+            keyCounter.key = event.key
+            keyCounter.count = 3;
+            keyCounter.time = 0;
+        }
+        keyCounter.time = new Date().getTime();
         switch (event.key) {
             case "Escape":
                 window.close();
                 break;
             case "ArrowUp":
-                window.moveBounds(0, -1);
+                window.moveBounds(0, -keyCounter.count / 3);
                 break;
             case "ArrowDown":
-                window.moveBounds(0, 1);
+                window.moveBounds(0, keyCounter.count / 3);
                 break;
             case "ArrowLeft":
-                window.moveBounds(-1, 0);
+                window.moveBounds(-keyCounter.count / 3, 0);
                 break;
             case "ArrowRight":
-                window.moveBounds(1, 0);
+                window.moveBounds(keyCounter.count / 3, 0);
                 break;
             case "=":
-                window.resize(img.width + 7, img.height);
+                window.resize(img.width + (keyCounter.count / 3) * 4, img.height);
                 break;
             case "-":
                 if (img.width > 100) {
-                    window.resize(img.width - 7, img.height);
+                    window.resize(img.width - (keyCounter.count / 3) * 4, img.height);
                 }
                 break;
             //旋转相关

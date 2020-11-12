@@ -14,6 +14,13 @@ const mineMap = {
     "ico": "image/x-icon"
 }
 
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 function show(payload) {
     let img = new Image();
     img.src = payload;
@@ -24,16 +31,15 @@ function show(payload) {
         //图片大小不能超过当前显示器80%，否则缩放
         let display = utools.getDisplayNearestPoint(utools.getCursorScreenPoint())
         if (display) {
-            if (width > display.size.width * 0.8) {
-                width = display.size.width * 0.8;
-                height = width / scale;
-            }
-            if (height > display.size.height * 0.8) {
-                height = display.size.height * 0.8;
-                width = height * scale;
-            }
+            width = Math.min(width, display.size.width * 0.8);
+            height = width / scale;
+            height = Math.min(height, display.size.height * 0.8);
+            width = height * scale;
         }
-        utools.createBrowserWindow('suspend.html?a=1#' + payload, {
+        let imgKey = uuidv4();
+        //通过localStorage传参,解决url传参的大小限制问题
+        localStorage.setItem(imgKey, payload);
+        utools.createBrowserWindow('suspend.html?a=1#' + imgKey, {
             title: 'img',
             width: parseInt(width),
             height: parseInt(height),
@@ -80,7 +86,6 @@ window.exports = {
                 if (action.type === 'files') {
                     for (i in action.payload) {
                         fileUrlData(action.payload[i].path).then(payload => {
-                            console.log(payload);
                             show(payload);
                         }).catch(err => {
                             utools.showNotification(err);
