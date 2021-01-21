@@ -68,13 +68,16 @@
         count: 3,
         time: 0
     }
+    let dowingKey = undefined;
+    document.addEventListener("keyup", event => {
+        dowingKey = undefined
+    })
     document.addEventListener("keydown", event => {
         console.log(event.key);
         //长按操作将加速
         if (keyCounter.key === event.key && new Date().getTime() - keyCounter.time < 200) {
             keyCounter.count++
         } else {
-            keyCounter.lastKey = keyCounter.key
             keyCounter.key = event.key
             keyCounter.count = 3;
             keyCounter.time = 0;
@@ -83,13 +86,17 @@
         switch (event.key) {
             case "c":
             case "C":
-                //拷贝图片
-                window.copyImage(img, filePath);
+                if (dowingKey == "Ctrl" || dowingKey == "Meta") {
+                    //拷贝图片
+                    window.copyImage(img, filePath);
+                }
                 break
             case "s":
             case "S":
-                //保存图片
-                window.save(img, filePath)
+                if (dowingKey == "Ctrl" || dowingKey == "Meta") {
+                    //保存图片
+                    window.save(img, filePath)
+                }
                 break
             case "Escape":
                 window.close();
@@ -138,7 +145,7 @@
                 window.document.body.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg)`
                 break;
         }
-
+        dowingKey = event.key
     });
     document.body.addEventListener("mousewheel", (e) => {
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
