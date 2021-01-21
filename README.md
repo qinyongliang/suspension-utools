@@ -6,17 +6,39 @@
 
 选中并按*esc*关闭悬浮窗
 
+支持悬浮
+
+- 粘贴板图片
+- base64字符串
+- svg片段
+- 以下图片文件
+    - bmp
+    - gif
+    - heic
+    - jpeg
+    - jpg
+    - jpe
+    - png
+    - svg
+    - webp
+    - ico
+
+支持选中悬浮图片后保存/拷贝
+
+
 [开源代码](https://github.com/qinyongliang/suspension-utools)
 
 快捷键：
 
 - `esc`         关闭窗口
 - `方向键`       微调窗口位置
-- `+`           放大图片
-- `-`           缩小图片
-- `[`           向左旋转
-- `]`           向右旋转
-- `PageUp`      向上翻转
-- `PageDown`    向下翻转
-- `Home`        向左翻转
-- `End`         向右翻转
+- `+`           放大
+- `-`           缩小
+- `[`           向左旋转图片
+- `]`           向右旋转图片
+- `PageUp`      向上翻转图片
+- `PageDown`    向下翻转图片
+- `Home`        向左翻转图片
+- `End`         向右翻转图片
+- `Ctrl+S`      保存图片
+- `Ctrl+C`      拷贝图片到剪切板

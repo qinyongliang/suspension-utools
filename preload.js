@@ -21,7 +21,7 @@ function uuidv4() {
     });
 }
 
-function show(payload) {
+function show(payload, filePath) {
     let img = new Image();
     img.src = payload;
     img.onload = function () {
@@ -39,6 +39,7 @@ function show(payload) {
         let imgKey = uuidv4();
         //通过localStorage传参,解决url传参的大小限制问题
         localStorage.setItem(imgKey, payload);
+        localStorage.setItem(imgKey + "_file", filePath);
         utools.createBrowserWindow('suspend.html?a=1#' + imgKey, {
             title: 'img',
             width: parseInt(width),
@@ -86,7 +87,7 @@ window.exports = {
                 if (action.type === 'files') {
                     for (i in action.payload) {
                         fileUrlData(action.payload[i].path).then(payload => {
-                            show(payload);
+                            show(payload, action.payload[i].path);
                         }).catch(err => {
                             utools.showNotification(err);
                         }).finally(() => {

@@ -33,7 +33,10 @@
     let img = document.querySelector("img")
     let imgKey = window.location.hash.substring(1);
     img.src = localStorage[imgKey];
+    let filePath = localStorage[imgKey + "_file"];
     localStorage.removeItem(imgKey);
+    localStorage.removeItem(imgKey + "_file");
+
     window.rotateX = 0;
     window.rotateY = 0;
 
@@ -60,6 +63,7 @@
     }
 
     let keyCounter = {
+        lastKey: undefined,
         key: undefined,
         count: 3,
         time: 0
@@ -70,12 +74,23 @@
         if (keyCounter.key === event.key && new Date().getTime() - keyCounter.time < 200) {
             keyCounter.count++
         } else {
+            keyCounter.lastKey = keyCounter.key
             keyCounter.key = event.key
             keyCounter.count = 3;
             keyCounter.time = 0;
         }
         keyCounter.time = new Date().getTime();
         switch (event.key) {
+            case "c":
+            case "C":
+                //拷贝图片
+                window.copyImage(img, filePath);
+                break
+            case "s":
+            case "S":
+                //保存图片
+                window.save(img, filePath)
+                break
             case "Escape":
                 window.close();
                 break;
