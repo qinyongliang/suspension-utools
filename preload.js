@@ -97,12 +97,20 @@ window.exports = {
                 } else if (action.type === 'img') {
                     show(action.payload);
                     window.utools.outPlugin();
-                } else if (action.type === 'text') {
-                    utools.screenCapture(base64Str => {
-                        show(base64Str);
-                        window.utools.outPlugin();
-                    })
                 }
+            }
+        }
+    },
+    "suspend-screenshot": {
+        mode: "none",
+        args: {
+            enter: (action) => {
+                //解决用户反馈的截图并识别容易截取到utools黑屏的问题
+                utools.hideMainWindow()
+                utools.screenCapture(base64Str => {
+                    show(base64Str);
+                    utools.outPlugin();
+                })
             }
         }
     },

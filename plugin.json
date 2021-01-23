@@ -4,13 +4,12 @@
 	"author": "qinyongliang",
 	"homepage": "https://github.com/qinyongliang/",
 	"preload": "preload.js",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"logo": "icon.png",
 	"features": [
 		{
 			"code": "suspend",
 			"cmds": [
-				"截图并悬浮",
 				{
 					"type": "img",
 					"label": "悬浮"
@@ -25,11 +24,15 @@
 			]
 		},
 		{
+			"code": "suspend-screenshot",
+			"cmds": ["截图并悬浮"]
+		},
+		{
 			"code": "suspend-base64",
 			"cmds": [
 				{
 					"type": "regex",
-					"label": "悬浮图片",
+					"label": "悬浮base64图片",
 					"match": "/^data:image\/(bmp|gif|heic|jpeg|jpeg|jpeg|png|svg\\+xml|webp|x-icon);base64,/",
 					"minLength":100
 				}
@@ -40,7 +43,7 @@
 			"cmds": [
 				{
 					"type": "regex",
-					"label": "悬浮图片",
+					"label": "悬浮svg",
 					"match": "/^<svg[\\d\\D\\w\\W\\s\\S]*<\/svg>[\\D]*$/",
 					"minLength":50
 				}
