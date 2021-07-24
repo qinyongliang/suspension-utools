@@ -1,4 +1,6 @@
-const electron = require('electron')
+const {
+    ipcRenderer
+} = require('electron')
 const fs = require('fs')
 
 const mineMap = {
@@ -16,7 +18,8 @@ const mineMap = {
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        var r = Math.random() * 16 | 0,
+            v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 }
@@ -40,7 +43,7 @@ function show(payload, filePath) {
         //通过localStorage传参,解决url传参的大小限制问题
         localStorage.setItem(imgKey, payload);
         localStorage.setItem(imgKey + "_file", filePath);
-        utools.createBrowserWindow('suspend.html?a=1#' + imgKey, {
+        let imgWin = utools.createBrowserWindow('suspend.html?#' + imgKey, {
             title: 'img',
             width: parseInt(width),
             height: parseInt(height),
@@ -55,8 +58,38 @@ function show(payload, filePath) {
             frame: false,
             alwaysOnTop: true,
             webPreferences: {
-                preload: 'suspend.js'
+                preload: 'suspend.js',
+                // devTools: true
             }
+        }, () => {
+            // imgWin.webContents.openDevTools();
+            ipcRenderer.sendTo(imgWin.webContents.id, 'init');
+            for (var i = 1; i <= 5; i++) {
+                setTimeout(() => ipcRenderer.sendTo(imgWin.webContents.id, 'init'), i * 200);
+            }
+            ipcRenderer.on('resize', (event, width, height) => {
+                if (event.senderId == imgWin.webContents.id) {
+                    console.log('resize', width, height);
+                    imgWin.setSize(parseInt(width), parseInt(height));
+                }
+            });
+            ipcRenderer.on('moveBounds', (event, x, y, width, height) => {
+                if (event.senderId == imgWin.webContents.id) {
+                    let bound = imgWin.getBounds();
+                    let newBounds = {
+                        x: parseInt(bound.x + x),
+                        y: parseInt(bound.y + y),
+                        width: parseInt(width || bound.width),
+                        height: parseInt(height || bound.height)
+                    }
+                    imgWin.setBounds(newBounds);
+                }
+            });
+            imgWin.on('will-resize', (event, newBounds) => {
+                event.preventDefault();
+                ipcRenderer.sendTo(imgWin.webContents.id, 'will-resize', newBounds);
+            });
+
         });
     }
 };

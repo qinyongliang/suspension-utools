@@ -40,10 +40,6 @@
     window.rotateX = 0;
     window.rotateY = 0;
 
-    if (!window.resize) {
-        window.resize = () => { }
-        window.moveBounds = () => { }
-    }
     function rotate(degree) {
         if (lock) {
             return;
