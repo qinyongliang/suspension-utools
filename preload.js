@@ -23,7 +23,7 @@ function uuidv4() {
         return v.toString(16);
     });
 }
-
+ 
 function show(payload, filePath) {
     let img = new Image();
     img.src = payload;
@@ -97,12 +97,12 @@ function show(payload, filePath) {
 function fileUrlData(path) {
     return new Promise((resolve, reject) => {
         let postfix = path.substring(path.lastIndexOf('.') + 1);
-        if (mineMap[postfix]) {
+        if (mineMap[postfix.toLowerCase()]) {
             fs.readFile(path, function (err, data) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(`data:${mineMap[postfix]};base64,${data.toString('base64')}`)
+                    resolve(`data:${mineMap[postfix.toLowerCase()]};base64,${data.toString('base64')}`)
                 }
             });
         } else {
@@ -141,6 +141,7 @@ window.exports = {
                 //解决用户反馈的截图并识别容易截取到utools黑屏的问题
                 utools.hideMainWindow()
                 utools.screenCapture(base64Str => {
+                    utools.copyImage(base64Str);
                     show(base64Str);
                     utools.outPlugin();
                 })
