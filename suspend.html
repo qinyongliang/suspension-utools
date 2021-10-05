@@ -21,6 +21,8 @@
     img {
         width: 100vw;
         height: auto;
+        border-radius: 6px;
+        overflow: hidden !important;
     }
 </style>
 
@@ -36,7 +38,6 @@
     let filePath = localStorage[imgKey + "_file"];
     localStorage.removeItem(imgKey);
     localStorage.removeItem(imgKey + "_file");
-
     window.rotateX = 0;
     window.rotateY = 0;
 
@@ -94,6 +95,10 @@
                     window.save(img, filePath)
                 }
                 break
+            case "q":
+            case "Q":
+                window.toEdit();
+                break;
             case "Escape":
                 window.close();
                 break;
@@ -109,10 +114,12 @@
             case "ArrowRight":
                 window.moveBounds(keyCounter.count / 3, 0);
                 break;
+            case "+":
             case "=":
                 window.resize(img.width + (keyCounter.count / 3) * 4, img.height);
                 break;
             case "-":
+            case "_":
                 if (img.width > 100) {
                     window.resize(img.width - (keyCounter.count / 3) * 4, img.height);
                 }

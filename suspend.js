@@ -19,7 +19,9 @@ let winId;
 ipcRenderer.on('init', (event) => {
     winId = event.senderId;
 });
-
+window.toEdit = () => {
+    ipcRenderer.sendTo(winId, 'toEdit');
+}
 window.resize = (width, height) => {
     ipcRenderer.sendTo(winId, 'resize', width, height);
 }

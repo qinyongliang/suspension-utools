@@ -23,8 +23,15 @@ function uuidv4() {
         return v.toString(16);
     });
 }
- 
+
 function show(payload, filePath) {
+    let params = {}
+    let paramsIndex = payload.lastIndexOf("#");
+    if (paramsIndex > 0) {
+        payload.substring(paramsIndex + 1).split("&").forEach(item => {
+            params[item.split("=")[0]] = item.split("=")[1]
+        })
+    }
     let img = new Image();
     img.src = payload;
     img.onload = function () {
@@ -45,6 +52,8 @@ function show(payload, filePath) {
         localStorage.setItem(imgKey + "_file", filePath);
         let imgWin = utools.createBrowserWindow('suspend.html?#' + imgKey, {
             title: 'img',
+            x: params.x ? parseInt(params.x) : null,
+            y: params.y ? parseInt(params.y) : null,
             width: parseInt(width),
             height: parseInt(height),
             useContentSize: true,
@@ -70,7 +79,7 @@ function show(payload, filePath) {
             ipcRenderer.on('resize', (event, width, height) => {
                 if (event.senderId == imgWin.webContents.id) {
                     console.log('resize', width, height);
-                    imgWin.setSize(parseInt(width), parseInt(height));
+                    imgWin.setSize(Math.ceil(width), Math.ceil(height));
                 }
             });
             ipcRenderer.on('moveBounds', (event, x, y, width, height) => {
@@ -83,6 +92,18 @@ function show(payload, filePath) {
                         height: parseInt(height || bound.height)
                     }
                     imgWin.setBounds(newBounds);
+                }
+            });
+            ipcRenderer.on('toEdit', (event) => {
+                if (event.senderId == imgWin.webContents.id) {
+                    let bound = imgWin.getBounds();
+                    imgWin.capturePage().then(img => {
+                        utools.redirect("截图工具", {
+                            'type': 'img',
+                            'data': `data:image/png;base64,${_arrayBufferToBase64(img)}#x=${bound.x}&y=${bound.y}`
+                        })
+                        imgWin.close();
+                    })
                 }
             });
             imgWin.on('will-resize', (event, newBounds) => {
@@ -109,6 +130,16 @@ function fileUrlData(path) {
             reject("不支持的文件格式!");
         }
     })
+}
+
+function _arrayBufferToBase64(buffer) {
+    var binary = '';
+    var bytes = new Uint8Array(buffer);
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
 }
 
 window.exports = {
