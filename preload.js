@@ -76,10 +76,11 @@ function show(payload, filePath) {
             for (var i = 1; i <= 5; i++) {
                 setTimeout(() => ipcRenderer.sendTo(imgWin.webContents.id, 'init'), i * 200);
             }
-            ipcRenderer.on('resize', (event, width, height) => {
+            ipcRenderer.on('resize', (event, proportion) => {
                 if (event.senderId == imgWin.webContents.id) {
-                    console.log('resize', width, height);
-                    imgWin.setSize(Math.ceil(width), Math.ceil(height));
+                    let nowBounds = imgWin.getBounds()
+                    let changed = nowBounds.width + proportion
+                    imgWin.setSize(Math.ceil(changed), Math.ceil(changed * (nowBounds.height / nowBounds.width)));
                 }
             });
             ipcRenderer.on('moveBounds', (event, x, y, width, height) => {
@@ -103,6 +104,30 @@ function show(payload, filePath) {
                             'data': `data:image/png;base64,${_arrayBufferToBase64(img)}#x=${bound.x}&y=${bound.y}`
                         })
                         imgWin.close();
+                    })
+                }
+            });
+            ipcRenderer.on('copyNowImage', (event) => {
+                if (event.senderId == imgWin.webContents.id) {
+                    imgWin.capturePage().then(img => {
+                        utools.copyImage(`data:image/png;base64,${_arrayBufferToBase64(img)}`)
+                        utools.showNotification('图片已经拷贝至剪切板')
+                    })
+                }
+            });
+            ipcRenderer.on('saveNowImage', (event) => {
+                if (event.senderId == imgWin.webContents.id) {
+                    imgWin.capturePage().then(img => {
+                        let defaultPath = utools.getPath('downloads') + "/suspend_" + new Date().getTime() + ".png"
+                        let savePath = utools.showSaveDialog({
+                            title: '保存图片',
+                            defaultPath: defaultPath,
+                            buttonLabel: '保存'
+                        })
+                        if (savePath) {
+                            fs.writeFileSync(savePath, img);
+                            utools.showNotification("保存成功")
+                        }
                     })
                 }
             });

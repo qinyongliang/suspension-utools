@@ -65,9 +65,9 @@
         count: 3,
         time: 0
     }
-    let dowingKey = undefined;
+    let dowingKey = {};
     document.addEventListener("keyup", event => {
-        dowingKey = undefined
+        delete dowingKey[event.key]
     })
     document.addEventListener("keydown", event => {
         console.log(event.key);
@@ -83,16 +83,16 @@
         switch (event.key) {
             case "c":
             case "C":
-                if (dowingKey == "Control" || dowingKey == "Meta") {
-                    //拷贝图片
-                    window.copyImage(img, filePath);
+                if (dowingKey["Control"] || dowingKey["Meta"]) {
+                    //拷贝当前图片
+                    window.copyNowImage();
                 }
                 break
             case "s":
             case "S":
-                if (dowingKey == "Control" || dowingKey == "Meta") {
-                    //保存图片
-                    window.save(img, filePath)
+                if (dowingKey["Control"] || dowingKey["Meta"]) {
+                    //保存当前图片
+                    window.saveNowImage();
                 }
                 break
             case "q":
@@ -116,12 +116,12 @@
                 break;
             case "+":
             case "=":
-                window.resize(img.width + (keyCounter.count / 3) * 4, img.height);
+                window.resize(keyCounter.count / 2);
                 break;
             case "-":
             case "_":
                 if (img.width > 100) {
-                    window.resize(img.width - (keyCounter.count / 3) * 4, img.height);
+                    window.resize(0 - keyCounter.count / 2);
                 }
                 break;
             //旋转相关
@@ -148,14 +148,14 @@
                 window.document.body.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg)`
                 break;
         }
-        dowingKey = event.key
+        dowingKey[event.key] = true
     });
     document.body.addEventListener("mousewheel", (e) => {
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         if (delta < 0 && img.width <= 100) {
             return false;
         }
-        window.resize(img.width + (7 * delta), img.height);
+        window.resize(delta * 7);
         return false;
     }, false);
 

@@ -22,36 +22,25 @@ ipcRenderer.on('init', (event) => {
 window.toEdit = () => {
     ipcRenderer.sendTo(winId, 'toEdit');
 }
-window.resize = (width, height) => {
-    ipcRenderer.sendTo(winId, 'resize', width, height);
+window.resize = (proportion) => {
+    ipcRenderer.sendTo(winId, 'resize', proportion);
 }
 window.moveBounds = (x, y, width, height) => {
     ipcRenderer.sendTo(winId, 'moveBounds', x, y, width, height);
 }
 
-window.copyImage = (img, filePath = null) => {
-    if (filePath) {
-        utools.copyFile(filePath)
-    }
-    utools.copyImage(img.src)
-    window.utools.showNotification('图片已经拷贝至剪切板')
+/**
+ * 拷贝当前图片，借助窗口截图实现
+ */
+ window.copyNowImage = () => {
+    ipcRenderer.sendTo(winId, 'copyNowImage');
 }
 
-window.save = (img) => {
-    var [src, type, base64] = img.src.match(/^data:(image\/.+);base64,(.*)/)
-    let suffix = mineMap[type]
-
-    let defaultPath = utools.getPath('downloads') + "/suspend_" + new Date().getTime() + "." + suffix
-    let savePath = utools.showSaveDialog({
-        title: '保存图片',
-        defaultPath: defaultPath,
-        buttonLabel: '保存'
-    })
-    if (savePath) {
-        var dataBuffer = Buffer.from(base64, 'base64');
-        fs.writeFileSync(savePath, dataBuffer);
-        utools.showNotification("保存成功")
-    }
+/*
+ * 保存当前图片，借助窗口截图实现
+ */
+window.saveNowImage = () => {
+   ipcRenderer.sendTo(winId, 'saveNowImage');
 }
 
 ipcRenderer.on('will-resize', (event, newBounds) => {
