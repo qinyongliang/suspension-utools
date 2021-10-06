@@ -76,11 +76,11 @@ function show(payload, filePath) {
             for (var i = 1; i <= 5; i++) {
                 setTimeout(() => ipcRenderer.sendTo(imgWin.webContents.id, 'init'), i * 200);
             }
-            ipcRenderer.on('resize', (event, proportion) => {
+            ipcRenderer.on('resize', (event, changed, proportion) => {
                 if (event.senderId == imgWin.webContents.id) {
                     let nowBounds = imgWin.getBounds()
-                    let changed = nowBounds.width + proportion
-                    imgWin.setSize(Math.ceil(changed), Math.ceil(changed * (nowBounds.height / nowBounds.width)));
+                    let widthChanged = nowBounds.width + changed
+                    imgWin.setSize(Math.ceil(widthChanged), Math.ceil(widthChanged * proportion));
                 }
             });
             ipcRenderer.on('moveBounds', (event, x, y, width, height) => {

@@ -116,12 +116,12 @@
                 break;
             case "+":
             case "=":
-                window.resize(keyCounter.count / 2);
+                window.resize(keyCounter.count / 2, img.height / img.width);
                 break;
             case "-":
             case "_":
                 if (img.width > 100) {
-                    window.resize(0 - keyCounter.count / 2);
+                    window.resize(0 - keyCounter.count / 2, img.height / img.width);
                 }
                 break;
             //旋转相关
@@ -155,7 +155,7 @@
         if (delta < 0 && img.width <= 100) {
             return false;
         }
-        window.resize(delta * 7);
+        window.resize(delta * 7, img.height / img.width);
         return false;
     }, false);
 

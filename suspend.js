@@ -22,8 +22,8 @@ ipcRenderer.on('init', (event) => {
 window.toEdit = () => {
     ipcRenderer.sendTo(winId, 'toEdit');
 }
-window.resize = (proportion) => {
-    ipcRenderer.sendTo(winId, 'resize', proportion);
+window.resize = (changed, proportion) => {
+    ipcRenderer.sendTo(winId, 'resize', changed, proportion);
 }
 window.moveBounds = (x, y, width, height) => {
     ipcRenderer.sendTo(winId, 'moveBounds', x, y, width, height);
@@ -32,7 +32,7 @@ window.moveBounds = (x, y, width, height) => {
 /**
  * 拷贝当前图片，借助窗口截图实现
  */
- window.copyNowImage = () => {
+window.copyNowImage = () => {
     ipcRenderer.sendTo(winId, 'copyNowImage');
 }
 
@@ -40,7 +40,7 @@ window.moveBounds = (x, y, width, height) => {
  * 保存当前图片，借助窗口截图实现
  */
 window.saveNowImage = () => {
-   ipcRenderer.sendTo(winId, 'saveNowImage');
+    ipcRenderer.sendTo(winId, 'saveNowImage');
 }
 
 ipcRenderer.on('will-resize', (event, newBounds) => {
