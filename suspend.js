@@ -42,7 +42,9 @@ window.copyNowImage = () => {
 window.saveNowImage = () => {
     ipcRenderer.sendTo(winId, 'saveNowImage');
 }
-
+ipcRenderer.on('reduction', (event) => {
+    document.body.className = "body-hover"
+})
 ipcRenderer.on('will-resize', (event, newBounds) => {
     //只能按比例缩放图片
     let img = window.document.querySelector("img");

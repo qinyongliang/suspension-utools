@@ -11,10 +11,13 @@
         overflow-x: hidden;
         overflow-y: hidden;
         opacity: 1;
+    }
+
+    .body-hover {
         transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
 
-    body:hover {
+    .body-hover:hover {
         opacity: 0.8;
     }
 
@@ -26,7 +29,7 @@
     }
 </style>
 
-<body scroll="no">
+<body scroll="no" class="body-hover">
     <img draggable="false" />
 </body>
 
@@ -84,20 +87,24 @@
             case "c":
             case "C":
                 if (dowingKey["Control"] || dowingKey["Meta"]) {
-                    //拷贝当前图片
-                    window.copyNowImage();
+                    document.body.className = ""
+                    //等待透明关闭，再拷贝当前图片
+                    setTimeout(() => window.copyNowImage(), 100)
                 }
                 break
             case "s":
             case "S":
                 if (dowingKey["Control"] || dowingKey["Meta"]) {
-                    //保存当前图片
-                    window.saveNowImage();
+                    document.body.className = ""
+                    //等待透明关闭，再保存当前图片
+                    setTimeout(() => window.saveNowImage(), 100)
                 }
                 break
             case "q":
             case "Q":
-                window.toEdit();
+                document.body.className = ""
+                //等待透明关闭，再去编辑图片
+                setTimeout(() => window.toEdit(), 100)
                 break;
             case "Escape":
                 window.close();

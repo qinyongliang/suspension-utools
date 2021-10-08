@@ -112,6 +112,7 @@ function show(payload, filePath) {
                     imgWin.capturePage().then(img => {
                         utools.copyImage(`data:image/png;base64,${_arrayBufferToBase64(img)}`)
                         utools.showNotification('图片已经拷贝至剪切板')
+                        ipcRenderer.sendTo(imgWin.webContents.id, 'reduction');
                     })
                 }
             });
@@ -128,6 +129,7 @@ function show(payload, filePath) {
                             fs.writeFileSync(savePath, img);
                             utools.showNotification("保存成功")
                         }
+                        ipcRenderer.sendTo(imgWin.webContents.id, 'reduction');
                     })
                 }
             });
