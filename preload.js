@@ -65,10 +65,10 @@ function show(payload, filePath) {
             transparent: true,
             backgroundColor: '#00000000',
             frame: false,
-            alwaysOnTop: true,
+            alwaysOnTop: false,
             webPreferences: {
                 preload: 'suspend.js',
-                // devTools: true
+                devTools: false
             }
         }, () => {
             // imgWin.webContents.openDevTools();
@@ -133,6 +133,12 @@ function show(payload, filePath) {
                     })
                 }
             });
+            ipcRenderer.on('reduceOpacity',(event,op) => {
+                if (event.senderId == imgWin.webContents.id) {
+                    let opacity = imgWin.getOpacity();
+                    imgWin.setOpacity(opacity +op);
+                }
+            })
             imgWin.on('will-resize', (event, newBounds) => {
                 event.preventDefault();
                 ipcRenderer.sendTo(imgWin.webContents.id, 'will-resize', newBounds);

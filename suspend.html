@@ -154,6 +154,16 @@
                 window.rotateX -= 180;
                 window.document.body.style.webkitTransform = `rotateX(${window.rotateX}deg) rotateY(${window.rotateY}deg)`
                 break;
+            case ",":
+                if (dowingKey["Control"] || dowingKey["Meta"]) {
+                    window.modifyOpacity(-0.1);
+                    break;
+                }
+            case ".":
+                if (dowingKey["Control"] || dowingKey["Meta"]) {
+                    window.modifyOpacity(0.1);
+                    break;
+                }
         }
         dowingKey[event.key] = true
     });
