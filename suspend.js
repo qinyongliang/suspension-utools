@@ -48,7 +48,7 @@ ipcRenderer.on('reduction', (event) => {
 })
 
 window.modifyOpacity = (op) => {
-    ipcRenderer.sendTo(winId, 'reduceOpacity',op);
+    ipcRenderer.sendTo(winId, 'modifyOpacity',op);
 }
 
 

@@ -24,7 +24,7 @@
     img {
         width: 100vw;
         height: auto;
-        border-radius: 6px;
+        border-radius: 3%;
         overflow: hidden !important;
     }
 </style>
@@ -167,7 +167,8 @@
         }
         dowingKey[event.key] = true
     });
-    document.body.addEventListener("mousewheel", (e) => {
+    document.addEventListener("wheel", (e) => {
+        console.log(e);
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         if (delta < 0 && img.width <= 100) {
             return false;

@@ -68,10 +68,11 @@ function show(payload, filePath) {
             alwaysOnTop: false,
             webPreferences: {
                 preload: 'suspend.js',
-                devTools: false
+                devTools: true
             }
         }, () => {
-            // imgWin.webContents.openDevTools();
+            imgWin.setSkipTaskbar(true);
+            imgWin.webContents.openDevTools();
             ipcRenderer.sendTo(imgWin.webContents.id, 'init');
             for (var i = 1; i <= 5; i++) {
                 setTimeout(() => ipcRenderer.sendTo(imgWin.webContents.id, 'init'), i * 200);
@@ -133,7 +134,7 @@ function show(payload, filePath) {
                     })
                 }
             });
-            ipcRenderer.on('reduceOpacity',(event,op) => {
+            ipcRenderer.on('modifyOpacity',(event,op) => {
                 if (event.senderId == imgWin.webContents.id) {
                     let opacity = imgWin.getOpacity();
                     imgWin.setOpacity(opacity +op);
