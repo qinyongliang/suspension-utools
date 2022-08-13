@@ -65,13 +65,14 @@ function show(payload, filePath) {
             transparent: true,
             backgroundColor: '#00000000',
             frame: false,
-            alwaysOnTop: true,
+            alwaysOnTop: false,
             webPreferences: {
                 preload: 'suspend.js',
-                // devTools: true
+                devTools: true
             }
         }, () => {
-            // imgWin.webContents.openDevTools();
+            imgWin.setSkipTaskbar(true);
+            imgWin.webContents.openDevTools();
             ipcRenderer.sendTo(imgWin.webContents.id, 'init');
             for (var i = 1; i <= 5; i++) {
                 setTimeout(() => ipcRenderer.sendTo(imgWin.webContents.id, 'init'), i * 200);
@@ -133,6 +134,12 @@ function show(payload, filePath) {
                     })
                 }
             });
+            ipcRenderer.on('modifyOpacity',(event,op) => {
+                if (event.senderId == imgWin.webContents.id) {
+                    let opacity = imgWin.getOpacity();
+                    imgWin.setOpacity(opacity +op);
+                }
+            })
             imgWin.on('will-resize', (event, newBounds) => {
                 event.preventDefault();
                 ipcRenderer.sendTo(imgWin.webContents.id, 'will-resize', newBounds);
