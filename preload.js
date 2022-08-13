@@ -57,6 +57,7 @@ function show(payload, filePath) {
             width: parseInt(width),
             height: parseInt(height),
             useContentSize: true,
+            skipTaskbar: true,
             //不能最大最小化
             minimizable: false,
             maximizable: false,
@@ -71,7 +72,7 @@ function show(payload, filePath) {
                 devTools: true
             }
         }, () => {
-            imgWin.setSkipTaskbar(true);
+            imgWin.setAlwaysOnTop(true, 'screen');
             imgWin.webContents.openDevTools();
             ipcRenderer.sendTo(imgWin.webContents.id, 'init');
             for (var i = 1; i <= 5; i++) {
