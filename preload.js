@@ -35,29 +35,38 @@ function show(payload, filePath) {
     let img = new Image();
     img.src = payload;
     img.onload = function () {
-        let width = img.width / (utools.isMacOs() ? 2 : 1)
-        let height = img.height / (utools.isMacOs() ? 2 : 1)
+        let width = img.width
+        let height = img.height
         let scale = width / (height * 1.0)
         //图片大小不能超过当前显示器80%，否则缩放
-        let display = utools.getDisplayNearestPoint(utools.getCursorScreenPoint())
+        let point = utools.getCursorScreenPoint();
+        let display = utools.getDisplayNearestPoint(point)
         if (display) {
+            width = width / display.scaleFactor
+            height = height / display.scaleFactor
+            let needCenter = width > display.size.width * 0.8
             width = Math.min(width, display.size.width * 0.8);
             height = width / scale;
             height = Math.min(height, display.size.height * 0.8);
             width = height * scale;
+
+            if(!needCenter && !params.x) {
+                params.x = point.x - width
+                params.y = point.y - height
+            }
         }
         let imgKey = uuidv4();
         //通过localStorage传参,解决url传参的大小限制问题
         localStorage.setItem(imgKey, payload);
         localStorage.setItem(imgKey + "_file", filePath);
-        let imgWin = utools.createBrowserWindow('suspend.html?#' + imgKey, {
+        let imgWin = utools.createBrowserWindow('suspend.html?' + imgKey, {
             title: 'img',
             x: params.x ? parseInt(params.x) : null,
             y: params.y ? parseInt(params.y) : null,
             width: parseInt(width),
             height: parseInt(height),
             useContentSize: true,
-            skipTaskbar: true,
+            // skipTaskbar: true,
             //不能最大最小化
             minimizable: false,
             maximizable: false,

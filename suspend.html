@@ -36,7 +36,7 @@
 <script type="application/javascript">
     let lock = false;
     let img = document.querySelector("img")
-    let imgKey = window.location.hash.substring(1);
+    let imgKey = window.location.hash == '' ? window.location.search.substring(1) : window.location.hash.substring(1)
     img.src = localStorage[imgKey];
     let filePath = localStorage[imgKey + "_file"];
     localStorage.removeItem(imgKey);
